@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha conta | RiosFootball</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <a href="index.html" class="topo__marca">
+      <img src="imagens/logo.png" alt="RiosFootball" width="56" height="56">
+      <span>Rios<b>Football</b></span>
+    </a>
+    <nav class="topo__menu"><a href="index.html">Voltar à loja</a></nav>
+  </header>
+
+  <main class="conta">
+    <section id="visitante">
+      <div id="google" hidden>
+        <div id="botao-google"></div>
+        <p id="erro-google" class="erro" hidden></p>
+        <p class="separador"><span>ou</span></p>
+      </div>
+
+      <div class="abas">
+        <button type="button" data-aba="entrar" aria-selected="false">Entrar</button>
+        <button type="button" data-aba="criar" aria-selected="false">Criar conta</button>
+      </div>
+
+      <form id="form-entrar" class="form" hidden>
+        <label>E-mail <input name="login" type="text" autocomplete="username" required></label>
+        <label>Senha <input name="senha" type="password" autocomplete="current-password" required></label>
+        <p class="erro" hidden></p>
+        <button class="botao" type="submit">Entrar</button>
+      </form>
+
+      <form id="form-criar" class="form" hidden>
+        <label>Nome completo <input name="nome" type="text" autocomplete="name" required></label>
+        <label>Telefone com DDD <input name="telefone" type="tel" autocomplete="tel" placeholder="31 99999-9999" required></label>
+        <label>E-mail <input name="email" type="email" autocomplete="email" required></label>
+        <label>Senha (mínimo 6 caracteres) <input name="senha" type="password" autocomplete="new-password" minlength="6" required></label>
+        <p class="erro" hidden></p>
+        <button class="botao" type="submit">Criar conta</button>
+      </form>
+    </section>
+
+    <section id="completar" hidden>
+      <h1>Falta pouco!</h1>
+      <p class="dica">Para finalizar seu cadastro, informe seu WhatsApp com DDD. É por ele que falamos com você sobre o pedido.</p>
+      <form id="form-completar" class="form">
+        <label>Telefone com DDD <input name="telefone" type="tel" autocomplete="tel" placeholder="31 99999-9999" required></label>
+        <p class="erro" hidden></p>
+        <button class="botao" type="submit">Salvar e continuar</button>
+      </form>
+    </section>
+
+    <section id="logado" hidden>
+      <h1 id="ola"></h1>
+      <h2>Meus pedidos</h2>
+      <div id="pedidos"></div>
+      <button id="sair" class="secundario" type="button">Sair da conta</button>
+    </section>
+  </main>
+
+  <script src="js/conta.js"></script>
+</body>
+</html>

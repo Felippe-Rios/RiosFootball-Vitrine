@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel | RiosFootball</title>
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<div class="painel">
+  <aside class="lateral">
+    <a href="/" class="lateral__marca"><img src="/imagens/logo.png" alt="" width="48" height="48"> Rios<b>Football</b></a>
+    <nav>
+      <button type="button" data-tela="pedidos" aria-current="true">Pedidos</button>
+      <button type="button" data-tela="produtos">Produtos</button>
+      <button type="button" data-tela="avaliacoes">Avaliações</button>
+      <button type="button" data-tela="times">Times</button>
+      <button type="button" data-tela="produto">Cadastrar novo produto</button>
+      <button type="button" data-tela="time">Cadastrar time</button>
+      <button type="button" data-tela="senha">Trocar senha</button>
+      <a href="/">Ver a loja</a>
+      <button type="button" id="sair">Sair</button>
+    </nav>
+  </aside>
+
+  <main class="painel__conteudo">
+    <section id="tela-pedidos">
+      <h1>Pedidos</h1>
+      <div id="lista-pedidos"></div>
+    </section>
+
+    <section id="tela-avaliacoes" hidden>
+      <h1>Avaliações</h1>
+      <p class="dica">Oculte avaliações com conteúdo inadequado. Elas deixam de aparecer na página da camisa.</p>
+      <div id="lista-avaliacoes"></div>
+    </section>
+
+    <section id="tela-produtos" hidden>
+      <h1>Produtos</h1>
+      <p class="dica">Ocultar tira a camisa da vitrine sem apagar (dá para mostrar de novo). Excluir apaga de vez.</p>
+      <div id="lista-produtos"></div>
+    </section>
+
+    <section id="tela-times" hidden>
+      <h1>Times</h1>
+      <p class="dica">Aqui você edita escudo, cores, liga e seção do menu, ou exclui um time que não tenha produtos.</p>
+      <div id="lista-times"></div>
+    </section>
+
+    <section id="tela-time" hidden>
+      <h1 id="titulo-time">Cadastrar time</h1>
+      <p class="dica">Se o time já existir, os dados dele são atualizados (ótimo para colocar o escudo).</p>
+      <form id="form-time" class="form">
+        <label>Nome do time <input name="nome" maxlength="60" required></label>
+        <label>Seção do menu
+          <select name="secao"><option>Camisas de Time</option><option>Seleções</option><option>NBA</option></select>
+        </label>
+        <label>Liga ou campeonato (escolha uma da lista ou digite uma nova)
+          <input name="liga" list="ligas" maxlength="40" placeholder="Brasileirão, Premier League, La Liga..." required>
+        </label>
+        <datalist id="ligas"></datalist>
+        <div class="cores">
+          <label>Cor principal <input type="color" name="cor1" value="#d4a843"></label>
+          <label>Cor secundária <input type="color" name="cor2" value="#0a0a0a"></label>
+        </div>
+        <label>Escudo (PNG ou WEBP com fundo transparente fica melhor) <input type="file" name="escudo" accept="image/png,image/jpeg,image/webp"></label>
+        <div id="escudo-atual" class="escudo-atual" hidden>
+          <img id="escudo-atual-img" alt="Escudo atual" width="64" height="64">
+          <label class="check"><input type="checkbox" name="remover_escudo" value="1"> Remover o escudo atual</label>
+        </div>
+        <p class="msg" hidden></p>
+        <button class="botao" type="submit" id="btn-time">Salvar time</button>
+        <button type="button" id="cancelar-time" class="secundario" hidden>Cancelar edição</button>
+      </form>
+    </section>
+
+    <section id="tela-produto" hidden>
+      <h1 id="titulo-produto">Cadastrar novo produto</h1>
+      <form id="form-produto" class="form">
+        <label>Time <select name="time_id" id="sel-time" required></select></label>
+        <label>Versão
+          <select name="versao" id="sel-versao"><option>Titular</option><option>Reserva</option><option>Terceira</option><option>Outra</option></select>
+        </label>
+        <label id="lbl-outra" hidden>Qual versão? <input name="versao_outra" maxlength="40" placeholder="Ex: Goleiro, Edição especial"></label>
+        <label>Temporada <input name="temporada" placeholder="25/26" pattern="\d{2}/\d{2}" required></label>
+        <label>Modelo
+          <select name="modelo"><option>Torcedor</option><option>Jogador</option><option>Kit infantil</option><option>Feminina</option><option>Conjunto</option></select>
+        </label>
+        <label>Preço (R$) <input name="preco" inputmode="decimal" placeholder="149,90" required></label>
+        <label class="check"><input type="checkbox" name="lancamento" value="1"> É lançamento</label>
+        <label>Detalhes (escudo, bordado, emborrachado...) <textarea name="detalhes" rows="3" maxlength="300"></textarea></label>
+        <label>Fotos (até 12, você pode escolher várias vezes)
+          <input type="file" id="fotos" accept="image/png,image/jpeg,image/webp" multiple>
+        </label>
+        <div id="previa" class="previa"></div>
+        <p class="msg" hidden></p>
+        <button class="botao" type="submit" id="btn-produto">Cadastrar produto</button>
+        <button type="button" id="cancelar-edicao" class="secundario" hidden>Cancelar edição</button>
+      </form>
+    </section>
+
+    <section id="tela-senha" hidden>
+      <h1>Trocar senha</h1>
+      <form id="form-senha" class="form">
+        <label>Senha atual <input name="atual" type="password" autocomplete="current-password" required></label>
+        <label>Nova senha (mínimo 8 caracteres) <input name="nova" type="password" autocomplete="new-password" minlength="8" required></label>
+        <p id="msg-senha" class="erro" hidden></p>
+        <button class="botao" type="submit">Salvar nova senha</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const real = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const json = (url, metodo, corpo) => fetch(url, { method: metodo, headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo || {}) });
+
+// ----- menu lateral -----
+document.querySelectorAll("[data-tela]").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("[data-tela]").forEach((x) => x.setAttribute("aria-current", x === b));
+  document.querySelectorAll(".painel__conteudo > section").forEach((s) => { s.hidden = s.id !== "tela-" + b.dataset.tela; });
+  if (b.dataset.tela === "produto") novoProduto();
+  if (b.dataset.tela === "time") novoTime();
+  if (b.dataset.tela === "times") carregarTimesAdmin();
+  if (b.dataset.tela === "produtos") carregarProdutos();
+  if (b.dataset.tela === "avaliacoes") carregarAvaliacoesAdmin();
+}));
+$("sair").addEventListener("click", async () => { await json("/api/logout", "POST"); location.href = "/"; });
+
+// ----- pedidos, agrupados por dia -----
+async function carregar() {
+  const resposta = await fetch("/api/admin/pedidos");
+  if (!resposta.ok) { location.href = "/conta.html"; return; }
+  const { status, pedidos } = await resposta.json();
+
+  const porDia = {};
+  pedidos.forEach((p) => { (porDia[p.criado_em.slice(0, 10)] ||= []).push(p); });
+
+  $("lista-pedidos").innerHTML = Object.keys(porDia).sort().reverse().map((dia) => {
+    const [a, m, d] = dia.split("-");
+    return `<h2 class="dia">Dia ${d}/${m}/${a}: total de pedidos = ${porDia[dia].length}</h2>` +
+      porDia[dia].map((p) => {
+        const fone = p.telefone ? p.telefone.replace(/\D/g, "") : "";
+        const zap = fone ? `<a href="https://wa.me/${fone.length <= 11 ? "55" + fone : fone}" target="_blank" rel="noopener">WhatsApp</a>` : "";
+        return `<article class="pedido">
+          <header><strong>Pedido nº ${p.id}</strong>
+            <select data-pedido="${p.id}">${status.map((s) => `<option ${s === p.status ? "selected" : ""}>${esc(s)}</option>`).join("")}</select>
+          </header>
+          <p>${esc(p.nome)}, ${esc(p.telefone || "")}, ${esc(p.email || "")} ${zap}</p>
+          <ul>${p.itens.map((i) => `<li>${i.qtd}x ${esc(i.nome)}, tam. ${esc(i.tamanho)}</li>`).join("")}</ul>
+          <p>Total: <strong>${real(p.total)}</strong> <small class="salvo" hidden>Salvo</small></p>
+        </article>`;
+      }).join("");
+  }).join("") || '<p class="vazio">Nenhum pedido ainda.</p>';
+}
+
+$("lista-pedidos").addEventListener("change", async (e) => {
+  const sel = e.target.closest("[data-pedido]");
+  if (!sel) return;
+  const r = await json(`/api/admin/pedidos/${sel.dataset.pedido}/status`, "PATCH", { status: sel.value });
+  const aviso = sel.closest(".pedido").querySelector(".salvo");
+  aviso.textContent = r.ok ? "Salvo" : "Erro ao salvar";
+  aviso.hidden = false;
+});
+
+// ----- trocar senha -----
+$("form-senha").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = $("msg-senha");
+  const r = await json("/api/admin/trocar-senha", "POST", Object.fromEntries(new FormData(e.target)));
+  const d = await r.json().catch(() => ({}));
+  msg.textContent = r.ok ? "Senha alterada com sucesso." : d.erro;
+  msg.hidden = false;
+  if (r.ok) e.target.reset();
+});
+
+// ----- cadastro de time e de produto (envio com arquivos) -----
+const enviar = (url, corpo) => fetch(url, { method: "POST", headers: { "X-Requested-With": "fetch" }, body: corpo });
+function mostrar(el, texto, ok) { el.textContent = texto; el.className = ok ? "msg ok" : "erro"; el.hidden = false; }
+
+$("form-time").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const r = await enviar(editandoTimeId ? `/api/admin/times/${editandoTimeId}` : "/api/admin/times", new FormData(e.target));
+  const d = await r.json().catch(() => ({}));
+  timesPromise = null;
+  if (r.ok && editandoTimeId) { document.querySelector('[data-tela="times"]').click(); return; }
+  mostrar(e.target.querySelector(".msg, .erro"), r.ok ? (d.atualizado ? "Time atualizado." : "Time cadastrado.") : (d.erro || "Erro ao salvar."), r.ok);
+  if (r.ok) { e.target.reset(); carregarLigas(); }
+});
+
+// ----- lista de times: editar e excluir -----
+let timesAdmin = [];
+let editandoTimeId = null;  // null = cadastrando; numero = editando aquele time
+
+async function carregarTimesAdmin() {
+  timesAdmin = await (await fetch("/api/admin/times")).json();
+  $("lista-times").innerHTML = timesAdmin.map((t) => `
+    <article class="item">
+      ${t.escudo ? `<img class="item__escudo" src="${esc(t.escudo)}" alt="" width="72" height="72">`
+                 : `<span class="escudo escudo--sigla item__sigla">${esc(t.nome.slice(0, 3).toUpperCase())}</span>`}
+      <div><strong>${esc(t.nome)}</strong>
+        <span>${esc(t.secao)}, ${esc(t.categoria)}, ${t.produtos} ${t.produtos === 1 ? "produto" : "produtos"}</span></div>
+      <div class="acoes">
+        <button type="button" data-editar-time="${t.id}">Editar</button>
+        <button type="button" data-excluir-time="${t.id}" class="perigo">Excluir</button>
+      </div>
+    </article>`).join("") || '<p class="vazio">Nenhum time cadastrado.</p>';
+}
+
+function novoTime() {  // deixa o formulario limpo, no modo "cadastrar"
+  editandoTimeId = null;
+  const f = $("form-time");
+  f.reset();
+  f.querySelector(".msg, .erro").hidden = true;
+  $("titulo-time").textContent = "Cadastrar time";
+  $("btn-time").textContent = "Salvar time";
+  $("cancelar-time").hidden = true;
+  $("escudo-atual").hidden = true;
+  carregarLigas();
+}
+
+function editarTime(id) {
+  const t = timesAdmin.find((x) => x.id === id);
+  document.querySelector('[data-tela="time"]').click();  // abre o formulario (no modo limpo)
+  const f = $("form-time");
+  editandoTimeId = id;
+  f.nome.value = t.nome;
+  f.secao.value = t.secao;
+  f.liga.value = t.categoria;
+  f.cor1.value = t.cor1 || "#d4a843";
+  f.cor2.value = t.cor2 || "#0a0a0a";
+  $("titulo-time").textContent = "Editar time";
+  $("btn-time").textContent = "Salvar alterações";
+  $("cancelar-time").hidden = false;
+  $("escudo-atual").hidden = !t.escudo;
+  $("escudo-atual-img").src = t.escudo || "";
+}
+
+$("cancelar-time").addEventListener("click", () => document.querySelector('[data-tela="times"]').click());
+$("lista-times").addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.editarTime) return editarTime(Number(b.dataset.editarTime));
+  if (b.dataset.excluirTime && confirm("Excluir este time? Só é possível se ele não tiver nenhum produto.")) {
+    const r = await json(`/api/admin/times/${b.dataset.excluirTime}/excluir`, "POST");
+    if (!r.ok) alert((await r.json().catch(() => ({}))).erro || "Não foi possível excluir.");
+    carregarTimesAdmin();
+  }
+});
+
+async function carregarLigas() {  // sugere as ligas que ja existem
+  const times = await (await fetch("/api/times")).json();
+  $("ligas").innerHTML = [...new Set(times.map((t) => t.categoria))].map((l) => `<option value="${esc(l)}">`).join("");
+}
+
+async function carregarTimes() {
+  const times = await (await fetch("/api/times")).json();
+  $("sel-time").innerHTML = '<option value="">Escolha o time</option>' +
+    times.map((t) => `<option value="${t.id}">${esc(t.nome)} (${esc(t.categoria)})</option>`).join("");
+}
+
+$("sel-versao").addEventListener("change", () => { $("lbl-outra").hidden = $("sel-versao").value !== "Outra"; });
+
+let timesPromise = null;  // guarda a lista de times para nao buscar de novo a cada clique
+const garantirTimes = () => (timesPromise ||= carregarTimes());
+
+let fotos = [];        // cada item: { id, url } (ja salva no servidor) ou { arquivo } (nova, vinda do computador)
+let editandoId = null; // null = cadastrando; numero = editando aquele produto
+
+function desenharPrevia() {
+  $("previa").innerHTML = fotos.map((f, i) => `
+    <figure><img src="${f.id ? esc(f.url) : URL.createObjectURL(f.arquivo)}" alt="">
+      <figcaption>${i === 0 ? "<strong>Principal</strong>" : `<button type="button" data-principal="${i}">Tornar principal</button>`}
+        <button type="button" data-remover="${i}">Remover</button></figcaption></figure>`).join("");
+}
+$("fotos").addEventListener("change", (e) => {
+  fotos = fotos.concat([...e.target.files].map((arquivo) => ({ arquivo }))).slice(0, 12);
+  e.target.value = "";
+  desenharPrevia();
+});
+$("previa").addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.principal) fotos.unshift(...fotos.splice(Number(b.dataset.principal), 1));
+  if (b.dataset.remover) fotos.splice(Number(b.dataset.remover), 1);
+  desenharPrevia();
+});
+
+function novoProduto() {  // deixa o formulario limpo, no modo "cadastrar"
+  editandoId = null;
+  fotos = [];
+  $("form-produto").reset();
+  $("lbl-outra").hidden = true;
+  $("titulo-produto").textContent = "Cadastrar novo produto";
+  $("btn-produto").textContent = "Cadastrar produto";
+  $("cancelar-edicao").hidden = true;
+  desenharPrevia();
+  return garantirTimes();
+}
+
+$("form-produto").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const dados = new FormData(e.target);
+  fotos.filter((f) => f.arquivo).forEach((f) => dados.append("fotos", f.arquivo));
+  let n = 0;  // "e12" = foto ja salva, "n0" = primeira foto nova: o servidor monta a ordem a partir disso
+  dados.append("ordem", JSON.stringify(fotos.map((f) => (f.id ? "e" + f.id : "n" + n++))));
+  const r = await enviar(editandoId ? `/api/admin/produtos/${editandoId}` : "/api/admin/produtos", dados);
+  const d = await r.json().catch(() => ({}));
+  const msg = e.target.querySelector(".msg, .erro");
+  if (!r.ok) return mostrar(msg, d.erro || "Erro ao salvar.", false);
+  if (editandoId) { document.querySelector('[data-tela="produtos"]').click(); return; }
+  await novoProduto();
+  mostrar(e.target.querySelector(".msg, .erro"), "Camisa cadastrada! Já está na vitrine.", true);
+});
+$("cancelar-edicao").addEventListener("click", () => document.querySelector('[data-tela="produtos"]').click());
+
+// ----- lista de produtos: editar, ocultar, excluir -----
+let produtosAdmin = [];
+async function carregarProdutos() {
+  produtosAdmin = await (await fetch("/api/admin/produtos")).json();
+  $("lista-produtos").innerHTML = produtosAdmin.map((p) => `
+    <article class="item ${p.ativo ? "" : "oculto"}">
+      <img src="${p.fotos[0] ? esc(p.fotos[0].arquivo) : "/imagens/logo.png"}" alt="" width="72" height="72">
+      <div><strong>${esc(p.time)} ${esc(p.versao)} ${esc(p.temporada)}</strong>
+        <span>${esc(p.modelo)}, ${real(p.preco)}${p.lancamento ? ", lançamento" : ""}${p.ativo ? "" : ", OCULTA na vitrine"}</span></div>
+      <div class="acoes">
+        <button type="button" data-editar="${p.id}">Editar</button>
+        <button type="button" data-ativo="${p.id}">${p.ativo ? "Ocultar" : "Mostrar"}</button>
+        <button type="button" data-excluir="${p.id}" class="perigo">Excluir</button>
+      </div>
+    </article>`).join("") || '<p class="vazio">Nenhum produto cadastrado.</p>';
+}
+
+$("lista-produtos").addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.editar) return editarProduto(Number(b.dataset.editar));
+  if (b.dataset.ativo) {
+    const p = produtosAdmin.find((x) => x.id === Number(b.dataset.ativo));
+    await json(`/api/admin/produtos/${p.id}/ativo`, "POST", { ativo: !p.ativo });
+  }
+  if (b.dataset.excluir && confirm("Excluir esta camisa e as fotos dela de vez? Os pedidos antigos continuam salvos.")) {
+    await json(`/api/admin/produtos/${b.dataset.excluir}/excluir`, "POST");
+  }
+  carregarProdutos();
+});
+
+async function editarProduto(id) {
+  const p = produtosAdmin.find((x) => x.id === id);
+  document.querySelector('[data-tela="produto"]').click();  // abre o formulario (no modo limpo)
+  await garantirTimes();
+  const f = $("form-produto");
+  editandoId = id;
+  f.time_id.value = p.time_id;
+  const fixa = ["Titular", "Reserva", "Terceira"].includes(p.versao);
+  f.versao.value = fixa ? p.versao : "Outra";
+  f.versao_outra.value = fixa ? "" : p.versao;
+  $("lbl-outra").hidden = fixa;
+  f.temporada.value = p.temporada;
+  f.modelo.value = p.modelo;
+  f.preco.value = String(p.preco).replace(".", ",");
+  f.lancamento.checked = !!p.lancamento;
+  f.detalhes.value = p.detalhes || "";
+  fotos = p.fotos.map((x) => ({ id: x.id, url: x.arquivo }));
+  desenharPrevia();
+  $("titulo-produto").textContent = "Editar produto";
+  $("btn-produto").textContent = "Salvar alterações";
+  $("cancelar-edicao").hidden = false;
+}
+
+// ----- avaliacoes dos clientes -----
+async function carregarAvaliacoesAdmin() {
+  const lista = await (await fetch("/api/admin/avaliacoes")).json();
+  $("lista-avaliacoes").innerHTML = lista.map((a) => `
+    <article class="pedido ${a.visivel ? "" : "oculto"}">
+      <header><strong>${esc(a.time)} ${esc(a.versao)} ${esc(a.temporada)} (${esc(a.modelo)})</strong>
+        <span class="status">${"★".repeat(a.nota)}${a.visivel ? "" : " OCULTA"}</span></header>
+      <p>${esc(a.nome)} <small>${new Date(a.criado_em).toLocaleString("pt-BR")}</small></p>
+      ${a.texto ? `<p>${esc(a.texto)}</p>` : ""}
+      <div class="midias">${a.midias.map((m) => m.tipo === "video"
+        ? `<video controls preload="metadata" src="${esc(m.arquivo)}"></video>`
+        : `<a href="${esc(m.arquivo)}" target="_blank" rel="noopener"><img src="${esc(m.arquivo)}" alt="" loading="lazy"></a>`).join("")}</div>
+      <div class="acoes"><button type="button" data-visivel="${a.id}" data-valor="${a.visivel ? 0 : 1}">${a.visivel ? "Ocultar" : "Mostrar"}</button></div>
+    </article>`).join("") || '<p class="vazio">Nenhuma avaliação ainda.</p>';
+}
+$("lista-avaliacoes").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-visivel]");
+  if (!b) return;
+  await json(`/api/admin/avaliacoes/${b.dataset.visivel}/visivel`, "POST", { visivel: b.dataset.valor === "1" });
+  carregarAvaliacoesAdmin();
+});
+
+carregar();
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# ID do cliente do Google (login com Google). Fica numa unica linha, sem aspas.
+1096021659827-olj448fjgf7quids27j3godqp83q7urt.apps.googleusercontent.com
