@@ -10,10 +10,10 @@ if not exist venv\Scripts\activate.bat (
 )
 call venv\Scripts\activate.bat
 
-python -c "import flask, requests, google.oauth2.id_token" >nul 2>nul
+python -c "import flask, requests, google.oauth2.id_token, turso_serverless" >nul 2>nul
 if errorlevel 1 (
   echo Instalando as bibliotecas, so quando faltar...
-  python -m pip install flask google-auth requests
+  python -m pip install -r requirements.txt
 )
 
 echo.
