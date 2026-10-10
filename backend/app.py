@@ -12,7 +12,7 @@ from pathlib import Path
 from flask import Flask, g, jsonify, redirect, request, send_from_directory, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from banco import conectar, iniciar_banco
+from banco import ERROS_INTEGRIDADE, conectar, iniciar_banco
 
 PASTA_BACKEND = Path(__file__).resolve().parent
 PASTA_SITE = PASTA_BACKEND.parent / "frontend"
@@ -194,7 +194,7 @@ def cadastrar():
             (email, nome, telefone, email, generate_password_hash(senha)),
         )
         db.commit()
-    except sqlite3.IntegrityError:
+    except ERROS_INTEGRIDADE:
         return erro("Já existe uma conta com esse e-mail.", 409)
     session.clear()
     session["uid"] = cursor.lastrowid
