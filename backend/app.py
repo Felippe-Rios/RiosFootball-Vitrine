@@ -1,6 +1,7 @@
 """Servidor da RiosFootball. Para ligar: dois cliques em rodar.bat e abra http://localhost:5000"""
 import html
 import json
+import os
 import re
 import secrets
 import sqlite3
@@ -35,15 +36,25 @@ app = Flask(__name__, static_folder=str(PASTA_SITE), static_url_path="")
 
 
 def chave_secreta():
-    """Chave que protege o login (cookie). Criada uma vez e guardada em backend/segredo.key. Nao compartilhe."""
+    """Usa SECRET_KEY do ambiente em produção e mantém segredo.key como fallback local."""
+    valor = os.environ.get("SECRET_KEY", "").strip()
+    if valor:
+        return valor
+    if os.environ.get("VERCEL"):
+        raise RuntimeError("Configure a variável de ambiente SECRET_KEY antes de publicar.")
     arquivo = PASTA_BACKEND / "segredo.key"
     if not arquivo.exists():
         arquivo.write_text(secrets.token_hex(32))
     return arquivo.read_text().strip()
 
 
-app.config.update(SECRET_KEY=chave_secreta(), SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax",
-                  MAX_CONTENT_LENGTH=100 * 1024 * 1024)
+app.config.update(
+    SECRET_KEY=chave_secreta(),
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=bool(os.environ.get("VERCEL")),
+    MAX_CONTENT_LENGTH=100 * 1024 * 1024,
+)
 
 
 # ---------- utilidades ----------
@@ -236,8 +247,13 @@ GOOGLE_ARQUIVO = PASTA_BACKEND / "config_google.txt"
 
 
 def google_client_id():
-    """Le o ID do cliente do Google em backend/config_google.txt (o arquivo e criado vazio na 1a vez)."""
+    """Usa GOOGLE_CLIENT_ID do ambiente em produção e mantém config_google.txt como fallback local."""
+    valor = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+    if valor:
+        return valor
     if not GOOGLE_ARQUIVO.exists():
+        if os.environ.get("VERCEL"):
+            return ""
         GOOGLE_ARQUIVO.write_text(
             "# Cole abaixo, em uma linha, o ID do cliente do Google (termina com .apps.googleusercontent.com)\n",
             encoding="utf-8")
