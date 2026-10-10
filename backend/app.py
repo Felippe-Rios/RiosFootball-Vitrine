@@ -4,7 +4,6 @@ import json
 import os
 import re
 import secrets
-import sqlite3
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
@@ -55,6 +54,9 @@ app.config.update(
     SESSION_COOKIE_SECURE=bool(os.environ.get("VERCEL")),
     MAX_CONTENT_LENGTH=100 * 1024 * 1024,
 )
+
+# Garante que as tabelas existam também quando o Flask é importado pela hospedagem.
+iniciar_banco()
 
 
 # ---------- utilidades ----------
@@ -867,6 +869,5 @@ def admin_visibilidade_avaliacao(avaliacao_id):
 
 if __name__ == "__main__":
     UPLOADS.mkdir(exist_ok=True)
-    iniciar_banco()
     print(f"Procurando o site em: {PASTA_SITE}  (index.html existe? {(PASTA_SITE / 'index.html').exists()})")
     app.run(debug=True)
