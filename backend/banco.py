@@ -1,6 +1,12 @@
 """Banco de dados da RiosFootball (SQLite): cria as tabelas e, na 1a vez, coloca dados de exemplo."""
+import os
 import sqlite3
 from pathlib import Path
+
+try:
+    import turso_serverless
+except ImportError:
+    turso_serverless = None
 
 from werkzeug.security import generate_password_hash
 
@@ -96,10 +102,31 @@ PRODUTOS = [  # time, versao, temporada, modelo, preco, lancamento, detalhes
 
 
 def conectar():
+    """Usa Turso em produção e SQLite local durante o desenvolvimento."""
+    url = os.environ.get("TURSO_DATABASE_URL", "").strip()
+    token = os.environ.get("TURSO_AUTH_TOKEN", "").strip()
+
+    if url:
+        if turso_serverless is None:
+            raise RuntimeError("Falta instalar a dependência turso-serverless.")
+        if not token:
+            raise RuntimeError("Configure TURSO_AUTH_TOKEN para acessar o banco remoto.")
+        conexao = turso_serverless.connect(url, auth_token=token)
+        conexao.row_factory = turso_serverless.Row
+        return conexao
+
+    if os.environ.get("VERCEL"):
+        raise RuntimeError("Configure TURSO_DATABASE_URL e TURSO_AUTH_TOKEN antes de publicar.")
+
     conexao = sqlite3.connect(ARQUIVO)
     conexao.row_factory = sqlite3.Row            # permite ler as colunas pelo nome
     conexao.execute("PRAGMA foreign_keys = ON")
     return conexao
+
+
+ERROS_INTEGRIDADE = (sqlite3.IntegrityError,)
+if turso_serverless is not None:
+    ERROS_INTEGRIDADE += (turso_serverless.IntegrityError,)
 
 
 def iniciar_banco():
@@ -118,10 +145,20 @@ def iniciar_banco():
                 (nome_time, *resto),
             )
     if db.execute("SELECT COUNT(*) FROM usuarios WHERE papel = 'admin'").fetchone()[0] == 0:
-        # SENHA INICIAL, so para testar no seu computador. Troque no painel (Trocar senha) antes de publicar o site.
+        senha_admin = os.environ.get("ADMIN_INITIAL_PASSWORD", "").strip()
+        if not senha_admin:
+            if os.environ.get("TURSO_DATABASE_URL") or os.environ.get("VERCEL"):
+                db.close()
+                raise RuntimeError(
+                    "Configure ADMIN_INITIAL_PASSWORD com pelo menos 8 caracteres antes da primeira publicação."
+                )
+            senha_admin = "1510"  # somente para desenvolvimento local
+        if (os.environ.get("TURSO_DATABASE_URL") or os.environ.get("VERCEL")) and len(senha_admin) < 8:
+            db.close()
+            raise RuntimeError("ADMIN_INITIAL_PASSWORD precisa ter pelo menos 8 caracteres.")
         db.execute(
             "INSERT INTO usuarios (login, nome, senha_hash, papel) VALUES ('admin', 'Administrador', ?, 'admin')",
-            (generate_password_hash("1510"),),
+            (generate_password_hash(senha_admin),),
         )
     db.commit()
     db.close()
